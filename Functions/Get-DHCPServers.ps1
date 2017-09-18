@@ -5,9 +5,12 @@
 
         .DESCRIPTION
 
+        .OUTPUT
+        Returns an array of DHCP server hostnames as strings. 
+
         .NOTES
         AUTHOR: Robert Ross
-        LASTEDIT: 20170915
+        LASTEDIT: 20170918
         KEYWORDS: DHCP
         LICENSE: MIT License, Copyright (c) 2017 Robert Ross
 
