@@ -21,7 +21,7 @@
     [CmdletBinding()]
 
     param(
-        [Parameter(Mandatory=$true, ValueFromPipeline=$true)][string[]]$MACAddress,
+        [Parameter(Mandatory=$true, ValueFromPipeline=$false)][string]$MACAddress,
         [Parameter(Mandatory=$true, ValueFromPipeline=$false)][string]$DHCPServer
     )
 
@@ -30,10 +30,27 @@
     }
 
     PROCESS {
-        foreach($MAC in $MACAddress){
-            #look for MAC in $DHCPServer
+        
+        foreach($i in (10,8,6,4,2)){ $MACAddress = $MACAddress.Insert($i,'-') }
+        
+        [object]$DHCPServer = Get-ADComputer $DHCPServer
+        $scopes = get-dhcpserverv4scope -computername $DHCPServer.Name
+
+        $found = $false
+        foreach($scope in $scopes){
+            $leases = Get-dhcpserverv4lease -computername $DHCPServer.Name -scopeid $scope.ScopeId
+
+            foreach($lease in $leases){
+                if($MACAddress -eq ($lease.ClientId)){
+                    return ($lease,$DHCPServer,$scope)
+                    $found = $true
+                    break
+                }
+            }
+        }
+        if(-not $found){
+            Write-Host "MAC not found on DHCP Server" $DHCPServer.Name
         }
     }
 
-    END {}
 }
