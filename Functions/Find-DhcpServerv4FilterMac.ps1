@@ -14,10 +14,14 @@
         If not found:
             -1
 
+        .EXAMPLE
+        Find-DhcpServerv4FilterMac 00-FF-FF-3E-34-A8 server
+        Get the DHCP filter information for a specific MAC address from a specified server(s). 
+
 
         .NOTES
         AUTHOR: Robert Ross
-        LASTEDIT: 20171002
+        LASTEDIT: 20171012
         KEYWORDS: DHCP, MAC
         LICENSE: MIT License, Copyright (c) 2017 Robert Ross
 
@@ -34,14 +38,16 @@
 
     BEGIN {
         Import-Module ActiveDirectory
+
+        $MACAddress = $MACAddress.ToUpper()
+                        
     }
 
     PROCESS {
         
-        foreach($i in (10,8,6,4,2)){ $MACAddress = $MACAddress.Insert($i,'-') }
-                
-        $found = $false
-            
+        $Found = $false
+        $FilterList = @() 
+         
         foreach($DHCPServer in $DHCPServers){
             try{
 
@@ -49,14 +55,13 @@
 
                 foreach($MAC in $FilteredMACs){
                     if($MACAddress -eq ($MAC.MacAddress)){
-                        return ($MAC,$DHCPServer)
-                        $found = $true
-                        break
+                        $FilterList += ($MAC,$DHCPServer)
+                        $Found = $true
                     }
                 }
             }
             catch [System.Exception] {
-                write-host $Error[0]
+                Write-Verbose $Error[0]
             }
         }
             
@@ -64,6 +69,9 @@
         if(-not $found){
             Write-Host "MAC not found on DHCP Server" $DHCPServer.Name
             return -1
+        }
+        else{
+            return $FilterList
         }
     }
    
