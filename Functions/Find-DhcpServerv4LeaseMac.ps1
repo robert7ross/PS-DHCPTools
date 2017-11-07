@@ -7,7 +7,7 @@
         nothing
 
         .OUTPUTS
-        Returns a DHCP lease object.
+        Returns a DHCP lease object or -1 if not found.
 
         .EXAMPLE
         Find-DhcpServerv4LeaseMac 00-AA-BB-CC-DD-EE server
@@ -15,7 +15,7 @@
 
         .NOTES
         AUTHOR: Robert Ross
-        LASTEDIT: 20171012
+        LASTEDIT: 20171107
         KEYWORDS: DHCP
         LICENSE: MIT License, Copyright (c) 2017 Robert Ross
 
@@ -60,13 +60,13 @@
                 }
             }
             catch [System.Exception] {
-                #write-host $Error[0]
+                Write-Verbose $Error[0]
             }
         }
             
             
         if(-not $found){
-            Write-Host "MAC not found on DHCP Server" $DHCPServer.Name
+            return -1
         }
     }
 
