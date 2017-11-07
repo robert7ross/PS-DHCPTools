@@ -21,7 +21,7 @@
 
         .NOTES
         AUTHOR: Robert Ross
-        LASTEDIT: 20171012
+        LASTEDIT: 20171107
         KEYWORDS: DHCP, MAC
         LICENSE: MIT License, Copyright (c) 2017 Robert Ross
 
@@ -67,7 +67,6 @@
             
             
         if(-not $found){
-            Write-Host "MAC not found on DHCP Server" $DHCPServer.Name
             return -1
         }
         else{
